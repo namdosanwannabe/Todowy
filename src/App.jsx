@@ -1,10 +1,17 @@
 import { useState } from "react";
 import "./App.css";
-import menu from "./assets/images/icons/menu-icon.svg";
 import background from "./assets/images/background-image.svg";
 import plus from "./assets/images/icons/plus-icon.svg";
 import circle from "./assets/images/icons/circle-outlined-icon.svg";
+import circleFilled from "./assets/images/icons/circle-filled-icon.svg";
 import Header from "./Header";
+import Sidebar from "./Sidebar";
+
+const initialData = [
+  { id: 1, title: "Do Something", done: false },
+  { id: 2, title: "Design the wireframe", done: false },
+  { id: 3, title: "Code the website", done: true },
+];
 
 export default function App() {
   return (
@@ -15,54 +22,29 @@ export default function App() {
   );
 }
 
-function Sidebar() {
-  const [isOpen, setIsOpen] = useState(true);
-
-  return (
-    <div
-      className={`sidebar h-full bg-light rounded-xl p-5 pb-8 transition-width duration-300 ease-in-out ${
-        isOpen ? "w-sidebar" : "w-20"
-      }`}
-    >
-      <div
-        className={`menu-container w-full flex items-center ${
-          isOpen ? "justify-between" : "justify-center"
-        }`}
-      >
-        {isOpen && <p className="logo text-xl uppercase font-bold">Todowy</p>}
-        <img
-          src={menu}
-          alt="Menu Icon"
-          className="cursor-pointer"
-          onClick={() => setIsOpen(!isOpen)}
-        />
-      </div>
-    </div>
-  );
-}
-
 function Main() {
   //Add the state here
+  const [todo, setTodo] = useState(initialData);
 
   return (
     <div className="flex flex-col flex-1 gap-6">
       <Header />
-      <TodoList />
+      <TodoList todo={todo} />
       <Input />
     </div>
   );
 }
 
-function TodoList() {
-  return (
-    <div className="w-full h-4/6">
-      <div className="empty-holder h-full flex flex-col justify-center items-center gap-6">
+function TodoList({ todo }) {
+  if (!todo.length)
+    return (
+      <div className="empty-holder w-full h-full flex flex-col justify-center items-center gap-6">
         <img
           src={background}
           alt="Woman with Paper"
           className="w-full h-full max-h-72"
         />
-        <div className="text-center flex flex-col items-center gap-2">
+        <div className="text-center flex flex-col items-center gap-1">
           <h3 className="text-2xl font-black">Nothing here yet!</h3>
           <p className="text-gray text-sm w-8/12 text-center">
             No tasks at the moment. Enjoy your free time or plan your next
@@ -70,6 +52,18 @@ function TodoList() {
           </p>
         </div>
       </div>
+    );
+
+  return (
+    <div className="w-full h-full flex flex-col gap-6">
+      {todo.map((item) => (
+        <Todo
+          key={item.id}
+          id={item.id}
+          title={item.title}
+          isDone={item.done}
+        />
+      ))}
     </div>
   );
 }
@@ -80,7 +74,7 @@ function Input() {
 
   return (
     <div
-      className="input-field-container w-full p-5 bg-light text-black relative rounded-md pl-16 "
+      className="input-field-container w-full py-4 bg-light text-black relative rounded-md pl-16 "
       onFocus={() => {
         setIsFocused(true);
         setPlaceholder(`Try typing "Design a website."`);
@@ -90,7 +84,7 @@ function Input() {
         setPlaceholder("Add Task");
       }}
     >
-      <div className="plus-icon-container absolute top-1/2 left-4 transform -translate-y-1/2">
+      <div className="plus-icon-container w-7 h-7 absolute top-1/2 left-4 transform -translate-y-1/2">
         <img
           className={`transition-opacity duration-300 ease-in-out top-0 left-0 ${
             isFocused ? "opacity-0" : "opacity-100"
@@ -114,6 +108,32 @@ function Input() {
         className="w-full text-lg placeholder:text-primary outline-none border-none bg-inherit"
         placeholder={placeholder}
       />
+    </div>
+  );
+}
+
+function Todo({ id, title, isDone }) {
+  return (
+    <div className="input-field-container w-full py-4 bg-light text-black relative rounded-md pl-14">
+      <div className="plus-icon-container w-7 h-7 absolute top-1/2 left-4 transform -translate-y-1/2">
+        <img
+          className={`transition-opacity duration-300 ease-in-out top-0 left-0 ${
+            isDone ? "opacity-0" : "opacity-100"
+          }`}
+          src={circle}
+          alt="Circle Icon"
+        />
+        <img
+          className={`transition-opacity duration-300 ease-in-out absolute top-0 left-0 ${
+            isDone ? "opacity-100" : "opacity-0"
+          }`}
+          src={circleFilled}
+          alt="Circle Icon"
+        />
+      </div>
+      <span className={`${isDone ? "line-through text-primary" : null}`}>
+        {title}
+      </span>
     </div>
   );
 }
