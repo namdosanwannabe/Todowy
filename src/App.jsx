@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import "./App.css";
 import background from "./assets/images/background-image.svg";
 import plus from "./assets/images/icons/plus-icon.svg";
@@ -6,6 +6,7 @@ import circle from "./assets/images/icons/circle-outlined-icon.svg";
 import circleFilled from "./assets/images/icons/circle-filled-icon.svg";
 import Header from "./Header";
 import Sidebar from "./Sidebar";
+import { supabase } from "./supabaseClient";
 
 const initialData = [
   { id: 1, title: "Do Something", done: false },
@@ -23,14 +24,35 @@ export default function App() {
 }
 
 function Main() {
-  //Add the state here
-  const [todo, setTodo] = useState(initialData);
+  const [todo, setTodo] = useState([]);
+
+  useEffect(() => {
+    fetchTodo();
+  }, []);
+
+  async function fetchTodo() {
+    const { data } = await supabase.from("todowy").select("*");
+    setTodo(data);
+  }
+
+  async function handleAddTodo(item) {
+    const { data, error } = await supabase
+      .from("todowy")
+      .insert([item])
+      .select();
+
+    if (error) {
+      console.error("Error adding todo:", error);
+    } else {
+      fetchTodo();
+    }
+  }
 
   return (
     <div className="flex flex-col flex-1 gap-6">
-      <Header />
+      <Header todo={todo} />
       <TodoList todo={todo} />
-      <Input />
+      <Input onAddTodo={handleAddTodo} />
     </div>
   );
 }
@@ -55,7 +77,7 @@ function TodoList({ todo }) {
     );
 
   return (
-    <div className="w-full h-full flex flex-col gap-6">
+    <div className="w-full h-full flex flex-col gap-3">
       {todo.map((item) => (
         <Todo
           key={item.id}
@@ -68,9 +90,19 @@ function TodoList({ todo }) {
   );
 }
 
-function Input() {
+function Input({ onAddTodo }) {
   const [isFocused, setIsFocused] = useState(false);
   const [placeholder, setPlaceholder] = useState("Add Task");
+  const [inputValue, setInputValue] = useState("");
+
+  const newTodo = { title: inputValue, is_done: false };
+
+  function handleSubmit(event) {
+    if (event.key === "Enter" && inputValue.trim()) {
+      onAddTodo(newTodo);
+      setInputValue("");
+    }
+  }
 
   return (
     <div
@@ -105,6 +137,9 @@ function Input() {
         type="text"
         name="todo"
         id="todo-input-field"
+        value={inputValue}
+        onKeyDown={handleSubmit}
+        onChange={(e) => setInputValue(e.target.value)}
         className="w-full text-lg placeholder:text-primary outline-none border-none bg-inherit"
         placeholder={placeholder}
       />
@@ -115,7 +150,7 @@ function Input() {
 function Todo({ id, title, isDone }) {
   return (
     <div className="input-field-container w-full py-4 bg-light text-black relative rounded-md pl-14">
-      <div className="plus-icon-container w-7 h-7 absolute top-1/2 left-4 transform -translate-y-1/2">
+      <div className="plus-icon-container w-6 h-6 absolute top-1/2 left-4 transform -translate-y-1/2 cursor-pointer">
         <img
           className={`transition-opacity duration-300 ease-in-out top-0 left-0 ${
             isDone ? "opacity-0" : "opacity-100"
