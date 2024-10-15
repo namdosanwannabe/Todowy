@@ -1,12 +1,12 @@
 import { useEffect, useState } from "react";
+import { supabase } from "./supabaseClient";
 import "./App.css";
 import background from "./assets/images/background-image.svg";
-import plus from "./assets/images/icons/plus-icon.svg";
 import circle from "./assets/images/icons/circle-outlined-icon.svg";
 import circleFilled from "./assets/images/icons/circle-filled-icon.svg";
 import Header from "./Header";
 import Sidebar from "./Sidebar";
-import { supabase } from "./supabaseClient";
+import Input from "./Input";
 
 export default function App() {
   return (
@@ -40,19 +40,39 @@ function Main() {
     } else {
       console.log(data);
       fetchTodo();
+      setTodo((prevTodos) => [...prevTodos, data[0]]);
+    }
+  }
+
+  async function handleToggleTodo(id, isDone) {
+    const { data, error } = await supabase
+      .from("todowy")
+      .update({ is_done: !isDone })
+      .eq("id", id)
+      .select();
+
+    if (error) {
+      console.error("Error adding todo:", error);
+    } else {
+      console.log(data);
+      setTodo((prevTodos) =>
+        prevTodos.map((todo) =>
+          todo.id === id ? { ...todo, is_done: !isDone } : todo
+        )
+      );
     }
   }
 
   return (
     <div className="flex flex-col flex-1 gap-6">
       <Header todo={todo} />
-      <TodoList todo={todo} />
+      <TodoList todo={todo} setTodo={setTodo} onToggleTodo={handleToggleTodo} />
       <Input onAddTodo={handleAddTodo} />
     </div>
   );
 }
 
-function TodoList({ todo }) {
+function TodoList({ todo, onToggleTodo }) {
   if (!todo.length)
     return (
       <div className="empty-holder w-full h-full flex flex-col justify-center items-center gap-6">
@@ -79,73 +99,20 @@ function TodoList({ todo }) {
           id={item.id}
           title={item.title}
           isDone={item.is_done}
+          onToggleTodo={onToggleTodo}
         />
       ))}
     </div>
   );
 }
 
-function Input({ onAddTodo }) {
-  const [isFocused, setIsFocused] = useState(false);
-  const [placeholder, setPlaceholder] = useState("Add Task");
-  const [inputValue, setInputValue] = useState("");
-
-  const newTodo = { title: inputValue, is_done: false };
-
-  function handleSubmit(event) {
-    if (event.key === "Enter" && inputValue.trim()) {
-      onAddTodo(newTodo);
-      setInputValue("");
-    }
-  }
-
-  return (
-    <div
-      className="input-field-container w-full py-4 bg-light text-black relative rounded-md pl-16 "
-      onFocus={() => {
-        setIsFocused(true);
-        setPlaceholder(`Try typing "Design a website."`);
-      }}
-      onBlur={() => {
-        setIsFocused(false);
-        setPlaceholder("Add Task");
-      }}
-    >
-      <div className="plus-icon-container w-7 h-7 absolute top-1/2 left-4 transform -translate-y-1/2">
-        <img
-          className={`transition-opacity duration-300 ease-in-out top-0 left-0 ${
-            isFocused ? "opacity-0" : "opacity-100"
-          }`}
-          src={plus}
-          alt="Plus Icon"
-        />
-        <img
-          className={`transition-opacity duration-300 ease-in-out absolute top-0 left-0 ${
-            isFocused ? "opacity-100" : "opacity-0"
-          }`}
-          src={circle}
-          alt="Circle Icon"
-        />
-      </div>
-
-      <input
-        type="text"
-        name="todo"
-        id="todo-input-field"
-        value={inputValue}
-        onKeyDown={handleSubmit}
-        onChange={(e) => setInputValue(e.target.value)}
-        className="w-full text-lg placeholder:text-primary outline-none border-none bg-inherit"
-        placeholder={placeholder}
-      />
-    </div>
-  );
-}
-
-function Todo({ id, title, isDone }) {
+function Todo({ id, title, isDone, onToggleTodo }) {
   return (
     <div className="input-field-container w-full py-4 bg-light text-black relative rounded-md pl-14">
-      <div className="plus-icon-container w-6 h-6 absolute top-1/2 left-4 transform -translate-y-1/2 cursor-pointer">
+      <div
+        className="plus-icon-container w-6 h-6 absolute top-1/2 left-4 transform -translate-y-1/2 cursor-pointer"
+        onClick={() => onToggleTodo(id, isDone)}
+      >
         <img
           className={`transition-opacity duration-300 ease-in-out top-0 left-0 ${
             isDone ? "opacity-0" : "opacity-100"
@@ -162,7 +129,7 @@ function Todo({ id, title, isDone }) {
         />
       </div>
       <span
-        className={`${isDone ? "line-through text-primary opacity-75" : null}`}
+        className={`${isDone ? "line-through text-primary opacity-75" : ""}`}
       >
         {title}
       </span>
