@@ -8,12 +8,6 @@ import Header from "./Header";
 import Sidebar from "./Sidebar";
 import { supabase } from "./supabaseClient";
 
-const initialData = [
-  { id: 1, title: "Do Something", done: false },
-  { id: 2, title: "Design the wireframe", done: false },
-  { id: 3, title: "Code the website", done: true },
-];
-
 export default function App() {
   return (
     <div className="app bg-white h-screen w-full text-black flex p-5 gap-5">
@@ -44,6 +38,7 @@ function Main() {
     if (error) {
       console.error("Error adding todo:", error);
     } else {
+      console.log(data);
       fetchTodo();
     }
   }
@@ -83,7 +78,7 @@ function TodoList({ todo }) {
           key={item.id}
           id={item.id}
           title={item.title}
-          isDone={item.done}
+          isDone={item.is_done}
         />
       ))}
     </div>
@@ -166,7 +161,9 @@ function Todo({ id, title, isDone }) {
           alt="Circle Icon"
         />
       </div>
-      <span className={`${isDone ? "line-through text-primary" : null}`}>
+      <span
+        className={`${isDone ? "line-through text-primary opacity-75" : null}`}
+      >
         {title}
       </span>
     </div>
