@@ -19,6 +19,7 @@ export default function App() {
 
 function Main() {
   const [todo, setTodo] = useState([]);
+  const [selectedTodo, setSelectedTodo] = useState(null);
 
   useEffect(() => {
     fetchTodo();
@@ -63,16 +64,38 @@ function Main() {
     }
   }
 
+  async function handleOpenDrawer(id) {
+    document.getElementById("todo-drawer").checked = true;
+
+    const { data, error } = await supabase
+      .from("todowy")
+      .select("*")
+      .eq("id", id)
+      .single();
+
+    if (error) {
+      console.error("Error fetching todo:", error);
+    } else {
+      setSelectedTodo(data);
+    }
+  }
+
   return (
     <div className="flex flex-col flex-1 gap-6">
       <Header todo={todo} />
-      <TodoList todo={todo} setTodo={setTodo} onToggleTodo={handleToggleTodo} />
+      <Drawer selectedTodo={selectedTodo} />
+      <TodoList
+        todo={todo}
+        setTodo={setTodo}
+        onToggleTodo={handleToggleTodo}
+        onOpenDrawer={handleOpenDrawer}
+      />
       <Input onAddTodo={handleAddTodo} />
     </div>
   );
 }
 
-function TodoList({ todo, onToggleTodo }) {
+function TodoList({ todo, onToggleTodo, onOpenDrawer }) {
   if (!todo.length)
     return (
       <div className="empty-holder w-full h-full flex flex-col justify-center items-center gap-6">
@@ -100,18 +123,25 @@ function TodoList({ todo, onToggleTodo }) {
           title={item.title}
           isDone={item.is_done}
           onToggleTodo={onToggleTodo}
+          onOpenDrawer={onOpenDrawer}
         />
       ))}
     </div>
   );
 }
 
-function Todo({ id, title, isDone, onToggleTodo }) {
+function Todo({ id, title, isDone, onToggleTodo, onOpenDrawer }) {
   return (
-    <div className="input-field-container w-full py-4 bg-light text-black relative rounded-md pl-14">
+    <div
+      className="input-field-container w-full py-4 bg-light text-black relative rounded-md pl-14"
+      onClick={() => onOpenDrawer(id)}
+    >
       <div
         className="plus-icon-container w-6 h-6 absolute top-1/2 left-4 transform -translate-y-1/2 cursor-pointer"
-        onClick={() => onToggleTodo(id, isDone)}
+        onClick={(event) => {
+          event.stopPropagation();
+          onToggleTodo(id, isDone);
+        }}
       >
         <img
           className={`transition-opacity duration-300 ease-in-out top-0 left-0 ${
@@ -133,6 +163,38 @@ function Todo({ id, title, isDone, onToggleTodo }) {
       >
         {title}
       </span>
+    </div>
+  );
+}
+
+function Drawer({ selectedTodo }) {
+  return (
+    <div className="drawer drawer-end ">
+      <input id="todo-drawer" type="checkbox" className="drawer-toggle" />
+      <div className="drawer-side z-50">
+        <label
+          htmlFor="todo-drawer"
+          aria-label="close sidebar"
+          className="drawer-overlay"
+        ></label>
+        <div className="menu bg-light text-neutral min-h-full w-96 p-4">
+          {selectedTodo ? (
+            <div>
+              <h1 className="text-2xl font-bold ">{selectedTodo.title}</h1>
+              <p>
+                Created on{" "}
+                {new Intl.DateTimeFormat("en-US", {
+                  weekday: "short",
+                  day: "2-digit",
+                  month: "short",
+                }).format(new Date(selectedTodo.created_at))}
+              </p>
+            </div>
+          ) : (
+            <p>No todo selected.</p>
+          )}
+        </div>
+      </div>
     </div>
   );
 }
