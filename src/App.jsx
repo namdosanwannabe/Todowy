@@ -3,10 +3,12 @@ import { supabase } from "./supabaseClient";
 import "./App.css";
 import background from "./assets/images/background-image.svg";
 import circle from "./assets/images/icons/circle-outlined-icon.svg";
+import deleteIcon from "./assets/images/icons/delete-icon.svg";
 import circleFilled from "./assets/images/icons/circle-filled-icon.svg";
 import Header from "./Header";
 import Sidebar from "./Sidebar";
 import Input from "./Input";
+import Button from "./Button";
 
 export default function App() {
   return (
@@ -39,9 +41,19 @@ function Main() {
     if (error) {
       console.error("Error adding todo:", error);
     } else {
-      console.log(data);
-      fetchTodo();
       setTodo((prevTodos) => [...prevTodos, data[0]]);
+    }
+  }
+
+  async function handleDeleteTodo(id) {
+    const { error } = await supabase.from("todowy").delete().eq("id", id);
+
+    if (error) {
+      console.error("Error deleting todo:", error);
+    } else {
+      setTodo((todos) => todos.filter((todo) => todo.id !== id));
+      document.getElementById("todo-drawer").checked = false;
+      document.getElementById("delete_modal").close();
     }
   }
 
@@ -53,7 +65,7 @@ function Main() {
       .select();
 
     if (error) {
-      console.error("Error adding todo:", error);
+      console.error("Error:", error);
     } else {
       console.log(data);
       setTodo((prevTodos) =>
@@ -91,6 +103,7 @@ function Main() {
         onOpenDrawer={handleOpenDrawer}
       />
       <Input onAddTodo={handleAddTodo} />
+      <Modal selectedTodo={selectedTodo} onDeleteTodo={handleDeleteTodo} />
     </div>
   );
 }
@@ -177,11 +190,26 @@ function Drawer({ selectedTodo }) {
           aria-label="close sidebar"
           className="drawer-overlay"
         ></label>
-        <div className="menu bg-light text-neutral min-h-full w-96 p-4">
-          {selectedTodo ? (
-            <div>
-              <h1 className="text-2xl font-bold ">{selectedTodo.title}</h1>
-              <p>
+        <div className="menu flex flex-col bg-light text-neutral min-h-full w-96 p-0">
+          <div className="menu-wrapper p-6">
+            {selectedTodo ? (
+              <div>
+                <h1 className="text-2xl font-bold text-wrap break-all">
+                  {selectedTodo.title}
+                </h1>
+              </div>
+            ) : (
+              <div className="flex flex-col gap-4">
+                <div className="skeleton h-4 w-full"></div>
+                <div className="skeleton h-4 w-full"></div>
+                <div className="skeleton h-4 w-full"></div>
+                <div className="skeleton h-4 w-full"></div>
+              </div>
+            )}
+          </div>
+          <div className="p-6 border-t-2 mt-auto text-center relative">
+            {selectedTodo && (
+              <p className="text-black font-semibold">
                 Created on{" "}
                 {new Intl.DateTimeFormat("en-US", {
                   weekday: "short",
@@ -189,17 +217,48 @@ function Drawer({ selectedTodo }) {
                   month: "short",
                 }).format(new Date(selectedTodo.created_at))}
               </p>
-            </div>
-          ) : (
-            <div className="flex flex-col gap-4">
-              <div className="skeleton h-4 w-full"></div>
-              <div className="skeleton h-4 w-full"></div>
-              <div className="skeleton h-4 w-full"></div>
-              <div className="skeleton h-4 w-full"></div>
-            </div>
-          )}
+            )}
+            <img
+              src={deleteIcon}
+              alt="Delete Icon"
+              className="w-4 h-4 absolute top-1/2 right-0 transform -translate-y-1/2 -translate-x-12 cursor-pointer select-none"
+              onClick={() =>
+                document.getElementById("delete_modal").showModal()
+              }
+            />
+          </div>
         </div>
       </div>
     </div>
+  );
+}
+
+function Modal({ selectedTodo, onDeleteTodo }) {
+  return (
+    <dialog id="delete_modal" className="modal modal-bottom sm:modal-middle">
+      <div className="modal-box bg-white text-black">
+        <h3 className="text-2xl font-bold">Delete task</h3>
+        <p className="text-lg py-4">
+          {selectedTodo && `"${selectedTodo.title}" will permanently deleted.`}
+        </p>
+        <div className="modal-action">
+          <form method="dialog" className="flex gap-4">
+            <Button
+              color="text-white"
+              background="bg-red"
+              onClick={(event) => {
+                event.preventDefault();
+                onDeleteTodo(selectedTodo.id);
+              }}
+            >
+              Delete
+            </Button>
+            <Button color="text-black" background="bg-gray-light">
+              Cancel
+            </Button>
+          </form>
+        </div>
+      </div>
+    </dialog>
   );
 }

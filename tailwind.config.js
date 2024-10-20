@@ -11,6 +11,7 @@ export default {
           light: "#DDDDDD",
         },
         light: "#F4F4F4",
+        red: "#B81B2C",
       },
       width: {
         sidebar: "324px",
