@@ -2,17 +2,22 @@ import { useState } from "react";
 import circle from "./assets/images/icons/circle-outlined-icon.svg";
 import plus from "./assets/images/icons/plus-icon.svg";
 
-export default function Input({ onAddTodo }) {
+export default function Input({ onAddTodo, users }) {
   const [isFocused, setIsFocused] = useState(false);
   const [placeholder, setPlaceholder] = useState("Add Task");
   const [inputValue, setInputValue] = useState("");
 
-  const newTodo = { title: inputValue, is_done: false };
-
   function handleSubmit(event) {
     if (event.key === "Enter" && inputValue.trim()) {
-      onAddTodo(newTodo);
-      setInputValue("");
+      if (users) {
+        const newTodo = {
+          title: inputValue,
+          is_done: false,
+          user_id: users.id,
+        };
+        onAddTodo(newTodo);
+        setInputValue("");
+      }
     }
   }
 
