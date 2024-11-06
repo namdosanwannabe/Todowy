@@ -36,12 +36,12 @@ export default function Sidebar({ users }) {
         />
       </div>
       {/* <h1 className="mt-5 text-center font-semibold">{users && users.email}</h1> */}
-      {/* <button
+      <button
         className="mt-auto bg-red p-2 rounded text-white"
         onClick={() => handleSignOutUser()}
       >
         Log Out
-      </button> */}
+      </button>
     </div>
   );
 }

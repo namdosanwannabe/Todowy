@@ -8,6 +8,7 @@ import Header from "./Header";
 import Sidebar from "./Sidebar";
 import Input from "./Input";
 import Button from "./components/Button";
+import { Modal } from "./components/Modal";
 
 export default function Home() {
   const [users, setUsers] = useState(null);
@@ -137,10 +138,24 @@ function Main({ users }) {
       />
       <Input onAddTodo={handleAddTodo} users={users} />
       <Modal
-        selectedTodo={selectedTodo}
-        onDeleteTodo={handleDeleteTodo}
-        users={users}
-      />
+        title={
+          selectedTodo && `"${selectedTodo.title}" will permanently deleted.`
+        }
+      >
+        <Button
+          color="text-white"
+          background="bg-red"
+          onClick={(event) => {
+            event.preventDefault();
+            handleDeleteTodo(selectedTodo.id, users.id);
+          }}
+        >
+          Delete
+        </Button>
+        <Button color="text-black" background="bg-gray-light">
+          Cancel
+        </Button>
+      </Modal>
     </div>
   );
 }
@@ -267,35 +282,5 @@ function Drawer({ selectedTodo }) {
         </div>
       </div>
     </div>
-  );
-}
-
-function Modal({ selectedTodo, onDeleteTodo, users }) {
-  return (
-    <dialog id="delete_modal" className="modal modal-bottom sm:modal-middle">
-      <div className="modal-box bg-white text-black">
-        <h3 className="text-2xl font-bold">Delete task</h3>
-        <p className="text-lg py-4">
-          {selectedTodo && `"${selectedTodo.title}" will permanently deleted.`}
-        </p>
-        <div className="modal-action">
-          <form method="dialog" className="flex gap-4">
-            <Button
-              color="text-white"
-              background="bg-red"
-              onClick={(event) => {
-                event.preventDefault();
-                onDeleteTodo(selectedTodo.id, users.id);
-              }}
-            >
-              Delete
-            </Button>
-            <Button color="text-black" background="bg-gray-light">
-              Cancel
-            </Button>
-          </form>
-        </div>
-      </div>
-    </dialog>
   );
 }

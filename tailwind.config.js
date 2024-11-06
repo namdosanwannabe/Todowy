@@ -5,6 +5,7 @@ export default {
     extend: {
       colors: {
         primary: "#6C63FF",
+        "primary-dark": "#6159e6",
         black: "#1E1E1E",
         gray: {
           DEFAULT: "#555555",
@@ -18,7 +19,8 @@ export default {
       },
     },
   },
-  plugins: [require("daisyui")],
+  plugins: [require("daisyui"), require("@tailwindcss/forms")],
+
   daisyui: {
     themes: [], // Set default theme to 'light'
   },
