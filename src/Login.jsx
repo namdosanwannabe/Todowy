@@ -9,6 +9,7 @@ export default function Login() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [showPassword, setShowPassword] = useState(false);
+  const [showLabel, setShowLabel] = useState(false);
 
   async function handleLogIn(event) {
     event.preventDefault();
@@ -25,6 +26,7 @@ export default function Login() {
 
     if (error) {
       console.error("Error logging in:", error.message);
+      setShowLabel(true);
     } else {
       console.log("Log in successful:", data);
       navigate("/home");
@@ -35,13 +37,14 @@ export default function Login() {
   }
 
   return (
-    <div className="h-screen grid grid-cols-1 gap-4 lg:grid-cols-2 lg:gap-5 p-5">
+    <div className="h-full lg:h-screen grid grid-cols-1 gap-4 lg:grid-cols-2 lg:gap-5 p-5 relative">
+      <div className="pattern"></div>
       <div className="relative h-full rounded-lg bg-primary p-8 flex flex-col items-center justify-center">
-        <h1 className="absolute top-5 left-5 text-white font-bold text-3xl sm:text-4xl md:text-5xl">
+        <h1 className="absolute top-3 left-4 sm:top-5 sm:left-5 text-white font-bold text-lg sm:text-4xl md:text-4xl">
           Todowy
         </h1>
         <img
-          className="w-full max-w-xs sm:max-w-sm md:max-w-lg  object-contain"
+          className="w-full max-w-xs max-h-[200px] sm:max-w-sm md:max-w-lg sm:max-h-[350px] md:max-h-[400px]  object-contain sm:my-10 lg:my-0"
           src={HeroImage}
           alt="Man with Tree"
         />
@@ -89,7 +92,7 @@ export default function Login() {
               </button>
             </div>
 
-            <div className="flex justify-end -mt-2">
+            <div className="flex justify-end -mt-3">
               <a
                 href="/forgot-password"
                 className="text-sm font-bold text-primary"
@@ -106,14 +109,14 @@ export default function Login() {
             Sign in
           </button>
 
-          <p className="text-center mt-8">
+          <p className="text-center text-black mt-6">
             Don’t have an account?{" "}
             <b
               className="font-bold text-primary"
               style={{ cursor: "pointer" }}
               onClick={() => navigate("/sign-up")}
             >
-              Sign Up
+              Sign up
             </b>
           </p>
         </form>
