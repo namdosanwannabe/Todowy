@@ -44,13 +44,13 @@ export default function Login() {
           Todowy
         </h1>
         <img
-          className="w-full max-w-xs max-h-[200px] sm:max-w-sm md:max-w-lg sm:max-h-[350px] md:max-h-[400px]  object-contain sm:my-10 lg:my-0"
+          className="w-full max-w-xs max-h-[200px] sm:max-w-sm md:max-w-lg sm:max-h-[350px] md:max-h-[500px]  object-contain sm:my-10 lg:my-0"
           src={HeroImage}
           alt="Man with Tree"
         />
       </div>
 
-      <div className="h-full rounded-lg border-2 p-8 md:py-24 flex flex-col items-center justify-center">
+      <div className="h-full rounded-lg p-8 md:py-24 flex flex-col items-center justify-center">
         <form
           className="w-full md:w-1/2 lg:w-2/3 xl:w-3/5"
           onSubmit={handleLogIn}

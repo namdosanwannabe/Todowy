@@ -57,7 +57,7 @@ export default function Input({ onAddTodo, users }) {
         value={inputValue}
         onKeyDown={handleSubmit}
         onChange={(e) => setInputValue(e.target.value)}
-        className="w-full text-lg placeholder:text-primary outline-none border-none bg-inherit"
+        className="w-full text-lg placeholder:text-primary outline-none border-none bg-inherit focus:outline-none focus:box-shadow-none"
         placeholder={placeholder}
       />
     </div>
