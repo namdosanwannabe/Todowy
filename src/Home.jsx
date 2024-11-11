@@ -4,6 +4,8 @@ import background from "./assets/images/background-image.svg";
 import circle from "./assets/images/icons/circle-outlined-icon.svg";
 import deleteIcon from "./assets/images/icons/delete-icon.svg";
 import circleFilled from "./assets/images/icons/circle-filled-icon.svg";
+import { StarIcon as StarIconSolid } from "@heroicons/react/24/solid";
+import { StarIcon as StarIconOutline } from "@heroicons/react/24/outline";
 import Header from "./Header";
 import Sidebar from "./Sidebar";
 import Input from "./Input";
@@ -198,36 +200,44 @@ function TodoList({ todo, onToggleTodo, onOpenDrawer }) {
 function Todo({ id, title, isDone, onToggleTodo, onOpenDrawer }) {
   return (
     <div
-      className="input-field-container w-full py-4 bg-light text-black relative rounded-md pl-14"
+      className="input-field-container w-full p-4 bg-light text-black relative rounded-md pl-14 flex justify-between items-center"
       onClick={() => onOpenDrawer(id)}
     >
-      <div
-        className="plus-icon-container w-6 h-6 absolute top-1/2 left-4 transform -translate-y-1/2 cursor-pointer"
-        onClick={(event) => {
-          event.stopPropagation();
-          onToggleTodo(id, isDone);
-        }}
-      >
-        <img
-          className={`transition-opacity duration-300 ease-in-out top-0 left-0 ${
-            isDone ? "opacity-0" : "opacity-100"
-          }`}
-          src={circle}
-          alt="Circle Icon"
-        />
-        <img
-          className={`transition-opacity duration-300 ease-in-out absolute top-0 left-0 ${
-            isDone ? "opacity-100" : "opacity-0"
-          }`}
-          src={circleFilled}
-          alt="Circle Icon"
-        />
+      <div>
+        <div
+          className="plus-icon-container w-6 h-6 absolute top-1/2 left-4 transform -translate-y-1/2 cursor-pointer"
+          onClick={(event) => {
+            event.stopPropagation();
+            onToggleTodo(id, isDone);
+          }}
+        >
+          <img
+            className={`transition-opacity duration-300 ease-in-out top-0 left-0 ${
+              isDone ? "opacity-0" : "opacity-100"
+            }`}
+            src={circle}
+            alt="Circle Icon"
+          />
+          <img
+            className={`transition-opacity duration-300 ease-in-out absolute top-0 left-0 ${
+              isDone ? "opacity-100" : "opacity-0"
+            }`}
+            src={circleFilled}
+            alt="Circle Icon"
+          />
+        </div>
+        <span
+          className={`${
+            isDone ? "line-through text-primary opacity-75" : ""
+          } text-base`}
+        >
+          {title}
+        </span>
       </div>
-      <span
-        className={`${isDone ? "line-through text-primary opacity-75" : ""}`}
-      >
-        {title}
-      </span>
+      <div className="flex">
+        <StarIconSolid className="w-6 h-6 text-primary cursor-pointer" />
+        <StarIconOutline className="w-6 h-6 text-primary cursor-pointer" />
+      </div>
     </div>
   );
 }
