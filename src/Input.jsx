@@ -23,7 +23,7 @@ export default function Input({ onAddTodo, users }) {
 
   return (
     <div
-      className="input-field-container w-full py-4 bg-light text-black relative rounded-md pl-16 "
+      className="input-field-container w-full py-2 bg-light text-black relative rounded-md pl-16 "
       onFocus={() => {
         setIsFocused(true);
         setPlaceholder(`Try typing "Design a website."`);
@@ -33,7 +33,7 @@ export default function Input({ onAddTodo, users }) {
         setPlaceholder("Add Task");
       }}
     >
-      <div className="plus-icon-container w-7 h-7 absolute top-1/2 left-4 transform -translate-y-1/2">
+      <div className="plus-icon-container w-7 h-7 absolute top-1/2 left-4 transform -translate-y-1/2 select-none">
         <img
           className={`transition-opacity duration-300 ease-in-out top-0 left-0 ${
             isFocused ? "opacity-0" : "opacity-100"

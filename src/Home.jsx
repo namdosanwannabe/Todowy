@@ -4,8 +4,7 @@ import background from "./assets/images/background-image.svg";
 import circle from "./assets/images/icons/circle-outlined-icon.svg";
 import deleteIcon from "./assets/images/icons/delete-icon.svg";
 import circleFilled from "./assets/images/icons/circle-filled-icon.svg";
-import { StarIcon as StarIconSolid } from "@heroicons/react/24/solid";
-import { StarIcon as StarIconOutline } from "@heroicons/react/24/outline";
+import { HiStar, HiOutlineStar } from "react-icons/hi2";
 import Header from "./Header";
 import Sidebar from "./Sidebar";
 import Input from "./Input";
@@ -198,6 +197,8 @@ function TodoList({ todo, onToggleTodo, onOpenDrawer }) {
 }
 
 function Todo({ id, title, isDone, onToggleTodo, onOpenDrawer }) {
+  const [isImportant, setIsImportant] = useState(true);
+
   return (
     <div
       className="input-field-container w-full p-4 bg-light text-black relative rounded-md pl-14 flex justify-between items-center"
@@ -212,31 +213,39 @@ function Todo({ id, title, isDone, onToggleTodo, onOpenDrawer }) {
           }}
         >
           <img
-            className={`transition-opacity duration-300 ease-in-out top-0 left-0 ${
-              isDone ? "opacity-0" : "opacity-100"
-            }`}
+            className={`transition-opacity duration-300 ease-in-out top-0 left-0 ${isDone ? "opacity-0" : "opacity-100"
+              }`}
             src={circle}
             alt="Circle Icon"
           />
           <img
-            className={`transition-opacity duration-300 ease-in-out absolute top-0 left-0 ${
-              isDone ? "opacity-100" : "opacity-0"
-            }`}
+            className={`transition-opacity duration-300 ease-in-out absolute top-0 left-0 ${isDone ? "opacity-100" : "opacity-0"
+              }`}
             src={circleFilled}
             alt="Circle Icon"
           />
         </div>
         <span
-          className={`${
-            isDone ? "line-through text-primary opacity-75" : ""
-          } text-base`}
+          className={`${isDone ? "line-through text-primary opacity-75" : ""
+            } text-base`}
         >
           {title}
         </span>
       </div>
       <div className="flex">
-        <StarIconSolid className="w-6 h-6 text-primary cursor-pointer" />
-        <StarIconOutline className="w-6 h-6 text-primary cursor-pointer" />
+        <div
+          className="btn-star"
+          onClick={(e) => {
+            setIsImportant(!isImportant);
+            e.stopPropagation();
+          }}
+        >
+          {isImportant ? (
+            <HiStar className="w-6 h-6 text-primary cursor-pointer container object-fill" />
+          ) : (
+            <HiOutlineStar className="w-6 h-6 text-primary cursor-pointer object-contain" />
+          )}
+        </div>
       </div>
     </div>
   );

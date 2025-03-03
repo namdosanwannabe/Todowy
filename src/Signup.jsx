@@ -1,6 +1,6 @@
 import { useState, useEffect } from "react";
 import { useNavigate, Routes, Route } from "react-router-dom";
-import { EyeIcon, EyeSlashIcon } from "@heroicons/react/24/solid";
+import { HiOutlineEye, HiOutlineEyeOff } from "react-icons/hi";
 import HeroImage from "./assets/images/hero-sign-up-image.svg";
 import { supabase } from "./supabaseClient";
 
@@ -100,9 +100,9 @@ export default function SignUp() {
                 className="absolute mt-[2px] top-1/2 right-0 -translate-y-1/2 pr-3 text-gray-500"
               >
                 {showPassword ? (
-                  <EyeIcon className="h-5 w-5" />
+                  <HiOutlineEye className="h-5 w-5" />
                 ) : (
-                  <EyeSlashIcon className="h-5 w-5" />
+                  <HiOutlineEyeOff className="h-5 w-5" />
                 )}
               </button>
             </div>
@@ -123,9 +123,9 @@ export default function SignUp() {
                 className="absolute mt-[2px] top-1/2 right-0 -translate-y-1/2 pr-3 text-gray-500"
               >
                 {showConfirmPassword ? (
-                  <EyeIcon className="h-5 w-5" />
+                  <HiOutlineEye className="h-5 w-5" />
                 ) : (
-                  <EyeSlashIcon className="h-5 w-5" />
+                  <HiOutlineEyeOff className="h-5 w-5" />
                 )}
               </button>
             </div>
